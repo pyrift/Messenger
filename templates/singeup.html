@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan o'tish</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --accent: #7c6aff;
+            --accent2: #ff6a9e;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+            --danger: #ff4e6a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-image:
+                radial-gradient(ellipse at 80% 20%, rgba(255,106,158,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(124,106,255,0.1) 0%, transparent 50%);
+        }
+        .wrapper { width: 100%; max-width: 400px; }
+        .brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .brand-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .brand-sub { font-size: 0.85rem; color: var(--muted); }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 24px; }
+        .error-box {
+            background: rgba(255,78,106,0.1);
+            border: 1px solid rgba(255,78,106,0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--danger);
+            margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 16px; }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        input, select {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--accent); }
+        input::placeholder { color: var(--muted); }
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent2), #c44a7a);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .link a { color: var(--accent); text-decoration: none; font-weight: 500; }
+        .link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="brand">
+            <div class="brand-logo">💬 Messenger</div>
+            <div class="brand-sub">Yangi hisob yarating</div>
+        </div>
+
+        <div class="card">
+            <h1>Ro'yxatdan o'tish</h1>
+
+            <form method="post" action="{% url 'singe_up_view' %}">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="error-box">{{ form.errors }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="id_username">Username</label>
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email">Email</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">Parol</label>
+                    {{ form.password }}
+                </div>
+
+                <button type="submit" class="btn">Ro'yxatdan o'tish →</button>
+            </form>
+
+            <div class="link">
+                Hisobingiz bormi? <a href="{% url 'login' %}">Kirish</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

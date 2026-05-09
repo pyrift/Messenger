@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Xabarni tahrirlash</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --accent: #7c6aff;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+            --danger: #ff4e6a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(124,106,255,0.12) 0%, transparent 60%);
+        }
+        .card {
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 28px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 28px;
+        }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        input[type="text"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+        }
+        input[type="text"]:focus { border-color: var(--accent); }
+        .btn-save {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #5a4adf);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-bottom: 12px;
+        }
+        .btn-save:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-delete {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(255,78,106,0.3);
+            color: var(--danger);
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover { background: rgba(255,78,106,0.08); border-color: var(--danger); }
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <a href="javascript:history.back()" class="back-link">← Orqaga</a>
+
+        <h1>Tahrirlash</h1>
+        <p class="subtitle">Xabar matnini o'zgartiring va saqlang</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <label for="text">Xabar matni</label>
+            <input type="text" id="text" name="text" value="{{ message.text }}" autofocus>
+            <button type="submit" class="btn-save">✓ Saqlash</button>
+        </form>
+
+        <div class="divider"></div>
+
+        <form method="POST" action="{% url 'update' message.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">🗑 Xabarni o'chirish</button>
+        </form>
+    </div>
+</body>
+</html>

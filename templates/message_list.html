@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ chat.name }} — Xabarlar</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --surface: #1a1a22;
+            --surface2: #22222e;
+            --accent: #7c6aff;
+            --accent2: #ff6a9e;
+            --text: #e8e8f0;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+            --danger: #ff4e6a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(ellipse at 20% 0%, rgba(124,106,255,0.1) 0%, transparent 60%);
+        }
+        header {
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+        .header-left { display: flex; align-items: center; gap: 14px; }
+        .back-link {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 1.4rem;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .chat-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+        }
+        .chat-badge {
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: var(--surface2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .btn-danger {
+            background: transparent;
+            border: 1px solid rgba(255,78,106,0.4);
+            color: var(--danger);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover { background: rgba(255,78,106,0.1); border-color: var(--danger); }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .messages-area::-webkit-scrollbar { width: 4px; }
+        .messages-area::-webkit-scrollbar-track { background: transparent; }
+        .messages-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .msg {
+            max-width: 68%;
+            animation: fadeIn 0.3s ease both;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px 14px 14px 4px;
+            padding: 12px 16px;
+            position: relative;
+        }
+        .msg-bubble:hover .msg-actions { opacity: 1; }
+        .msg-sender {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+        .msg-text {
+            font-size: 0.925rem;
+            line-height: 1.5;
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+        }
+        .msg-text:hover { color: var(--accent); }
+        .msg-time {
+            font-size: 0.72rem;
+            color: var(--muted);
+            margin-top: 6px;
+            text-align: right;
+        }
+        .msg-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+            position: absolute;
+            right: -36px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .edit-btn {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        .edit-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            gap: 10px;
+        }
+        .empty-state span { font-size: 3rem; }
+        .empty-state p { font-size: 0.9rem; }
+
+        .input-area {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+        .input-form {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        textarea {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+            min-height: 44px;
+            max-height: 120px;
+        }
+        textarea:focus { border-color: var(--accent); }
+        textarea::placeholder { color: var(--muted); }
+        .send-btn {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--accent), #5a4adf);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .send-btn:hover { opacity: 0.9; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <a href="{% url 'chat_list' %}" class="back-link">←</a>
+            <div>
+                <div class="chat-title">{{ chat.name }}</div>
+            </div>
+            <span class="chat-badge">chat</span>
+        </div>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" name="delete_chat" class="btn-danger">🗑 O'chirish</button>
+        </form>
+    </header>
+
+    <div class="messages-area">
+        {% for msg in messages %}
+            <div class="msg">
+                <div class="msg-bubble">
+                    <div class="msg-sender">{{ msg.sender.username }}</div>
+                    <a href="{% url 'update' msg.id %}" class="msg-text">{{ msg.text }}</a>
+                    <div class="msg-time">{{ msg.sent_at|date:"H:i" }}</div>
+                    <div class="msg-actions">
+                        <a href="{% url 'update' msg.id %}" class="edit-btn" title="Tahrirlash">✏</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <span>💬</span>
+                <p>Hali xabar yo'q. Birinchi bo'ling!</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="input-area">
+        <form method="POST" class="input-form">
+            {% csrf_token %}
+            <textarea name="text" rows="1" placeholder="Xabar yozing..." required></textarea>
+            <button type="submit" class="send-btn">➤</button>
+        </form>
+    </div>
+</body>
+</html>
