@@ -173,7 +173,7 @@
         <div class="logo">💬 Messenger</div>
         <div class="user-badge">
             <div class="avatar">{{ request.user.username|slice:":1"|upper }}</div>
-            <span>{{ request.user }}</span>
+            <a href="{% url 'porofil' request.user.id %}" >{{ request.user }}</a>
             <a href="{% url 'logout' %}" class="logout-link">Chiqish</a>
         </div>
     </header>

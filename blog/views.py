@@ -130,6 +130,13 @@ def update(request, chat_id):
     else:
         return redirect('chat_messages', chat_id=instance.chat.id)
     return render(request, 'edit.html', {'message': instance})
+
+def porofil(request, chat_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'porofil.html')
+
+
 def logout_page(request):
     logout(request)
     return redirect('login')
