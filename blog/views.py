@@ -114,19 +114,21 @@ def update(request, chat_id):
     #bunyerda shu id ga teng bolgan malumotni oladi
     instance = Message.objects.get(id=chat_id)
 
-    if request.method == "POST":
-        #tugma boliganda malumotni oladi yani forontdan kelgan malumot
-        text = request.POST.get('text', '').strip()
-        #
-        instance.text = text
-        instance.save()
-        return redirect('chat_messages', chat_id=instance.chat.id)
+    if instance.sender == request.user:
+        if request.method == "POST":
+            #tugma boliganda malumotni oladi yani forontdan kelgan malumot
+            text = request.POST.get('text', '').strip()
+            #
+            instance.text = text
+            instance.save()
+            return redirect('chat_messages', chat_id=instance.chat.id)
 
-    if request.method == "POST":
-        instance = Message.objects.get(id=chat_id)
-        instance.delete()
+        if request.method == "POST":
+            instance = Message.objects.get(id=chat_id)
+            instance.delete()
+            return redirect('chat_messages', chat_id=instance.chat.id)
+    else:
         return redirect('chat_messages', chat_id=instance.chat.id)
-
     return render(request, 'edit.html', {'message': instance})
 def logout_page(request):
     logout(request)
