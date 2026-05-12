@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from .models import Chat, Message
+from user.models import User
 # class ChatAPI(generics.ListCreateAPIView):
 #     serializer_class = ChatSerializer
 #     permission_classes = [permissions.IsAuthenticated]
@@ -107,7 +108,6 @@ def message(request, chat_id):
     # Chat xabarlari sahifasini ko'rsatamiz.
     return render(request, 'message_list.html', context)
 
-
 def update(request, chat_id):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -134,8 +134,17 @@ def update(request, chat_id):
 def porofil(request, chat_id):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'porofil.html')
 
+    userdatab = get_object_or_404(User, id=chat_id)
+    context = {
+        'userdatab': userdatab,
+    }
+    return render(request, 'porofil.html',context)
+
+def porfiledit(request ,chat_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'ProfilEdit.html')
 
 def logout_page(request):
     logout(request)
