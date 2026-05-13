@@ -260,9 +260,13 @@
         {% endif %}
         <div class="status-dot"></div>
     </div>
-
+   {% if userdatab.is_superuser %}
+    <div class="badge"><a href="/admin/">Super Admin 👑</a></div>
+{% elif userdatab.is_staff %}
+    <div class="badge">Admin</div>
+{% else %}
     <div class="badge">Foydalanuvchi</div>
-
+{% endif %}
     <h1 class="username">{{ userdatab.username }}</h1>
     <p class="email">{{ userdatab.email }}</p>
 

@@ -161,12 +161,11 @@
         .msg-row.mine .msg-sender { display: none; }
 
         .msg-text {
-            font-size: 0.9rem;
-            line-height: 1.55;
             color: var(--text);
             text-decoration: none;
-            display: block;
-            word-break: break-word;
+            border-radius: 10px;
+            padding: 8px x 14px;
+
         }
         .msg-time {
             font-size: 0.68rem;
@@ -307,7 +306,11 @@
                     <div class="msg-bubble">
                         <div class="bubble-inner">
                             <div class="msg-sender">{{ msg.sender.username }}</div>
-                            <span class="msg-text">{{ msg.text }}</span>
+
+
+                            <span class="msg-text, ong_tomon">{{ msg.text }}</span>
+
+
                             <div class="msg-time">{{ msg.sent_at|date:"H:i" }}</div>
                         </div>
                     </div>

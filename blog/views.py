@@ -1,8 +1,12 @@
+from pydoc import text
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from .models import Chat, Message
 from user.models import User
+from user.models import Profile
+from django.contrib.auth import update_session_auth_hash
 # class ChatAPI(generics.ListCreateAPIView):
 #     serializer_class = ChatSerializer
 #     permission_classes = [permissions.IsAuthenticated]
@@ -38,6 +42,7 @@ from user.models import User
 #     context_object_name = 'messages'
 #     def get_queryset(self):
 #         return Message.objects.filter(chat_id=self.kwargs['chat_id'], chat__participants=self.request.user)
+
 
 def chat_list(request):
     # Login qilmagan user chatlarni ko'rmasin.
@@ -144,7 +149,58 @@ def porofil(request, chat_id):
 def porfiledit(request ,chat_id):
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, 'ProfilEdit.html')
+    instance = User.objects.get(id=chat_id)
+    profile = Profile.objects.get(user=instance)
+    if request.method == "POST":
+        form_type = request.POST.get('form_type')
+        value = request.POST.get('text', '').strip()
+
+        if form_type == "username":
+            instance.username = value
+            instance.save()
+
+        elif form_type == "email":
+            print("EMAIL:", value)
+            print("form_type:", form_type)
+            instance.email = value
+            instance.save()
+            print("Saqlandi:", instance.email)
+
+        elif form_type == "password":
+            old_password = request.POST.get('old_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+
+            if not instance.check_password(old_password):
+                return render(request, 'ProfilEdit.html', {
+                    'msg': instance,
+                    'profile': profile,
+                    'error': 'Eski parol noto\'g\'ri!'
+                })
+
+            if new_password != confirm_password:
+                return render(request, 'ProfilEdit.html', {
+                    'msg': instance,
+                    'profile': profile,
+                    'error': 'Yangi parollar mos emas!'
+                })
+
+            instance.set_password(new_password)
+            instance.save()
+            update_session_auth_hash(request, instance)  # ← Shu qator muammoni hal qiladi
+            return redirect('porofil', chat_id=instance.id)
+        elif form_type == "avatar":
+            print("=== AVATAR ===")
+            print("FILES:", request.FILES)
+            print("avatar bormi:", 'avatar' in request.FILES)
+            if 'avatar' in request.FILES:
+                profile.image = request.FILES['avatar']
+                profile.save()
+                print("Saqlandi:", profile.image.name)
+
+        return redirect('porofil', chat_id=instance.id)
+
+    return render(request, 'ProfilEdit.html',{'msg': instance})
 
 def logout_page(request):
     logout(request)

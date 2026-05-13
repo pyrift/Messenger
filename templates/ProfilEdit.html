@@ -1,10 +1,384 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilni tahrirlash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #08080b;
+            --surface: #111116;
+            --surface2: #1a1a22;
+            --border: rgba(255,255,255,0.07);
+            --accent: #7c6aff;
+            --accent2: #ff6a9a;
+            --text: #f0f0f5;
+            --muted: #55556a;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .bg-glow span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2;
+        }
+        .bg-glow span:nth-child(1) {
+            width: 350px; height: 350px;
+            background: var(--accent);
+            top: -80px; left: -80px;
+            animation: float1 10s ease-in-out infinite alternate;
+        }
+        .bg-glow span:nth-child(2) {
+            width: 300px; height: 300px;
+            background: var(--accent2);
+            bottom: -60px; right: -60px;
+            animation: float2 12s ease-in-out infinite alternate;
+        }
+        @keyframes float1 { to { transform: translate(50px, 35px); } }
+        @keyframes float2 { to { transform: translate(-40px, -30px); } }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 40px 32px 32px;
+            text-align: center;
+            animation: rise 0.7s cubic-bezier(.22,1,.36,1) both;
+        }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(28px) scale(0.97); }
+            to   { opacity: 1; transform: none; }
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 50%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+        }
+
+        .avatar-ring {
+            position: relative;
+            width: 90px; height: 90px;
+            margin: 0 auto 20px;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent), var(--accent2), var(--accent));
+            animation: spin 5s linear infinite;
+        }
+        .avatar-ring::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            background: var(--surface);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .avatar-ring img,
+        .avatar-letter {
+            position: absolute;
+            inset: 2px;
+            border-radius: 50%;
+            z-index: 2;
+            width: calc(100% - 4px);
+            height: calc(100% - 4px);
+            object-fit: cover;
+        }
+        .avatar-letter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .section {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            flex: 1;
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: var(--text);
+            font-size: 13.5px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: rgba(124,106,255,0.5);
+        }
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: var(--muted);
+        }
+        input[type="file"] {
+            flex: 1;
+            color: var(--muted);
+            font-size: 12.5px;
+            background: rgba(255,255,255,0.04);
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 16px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: 'Syne', sans-serif;
+            transition: opacity 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 6px;
+        }
+
+        .mb-8 { margin-bottom: 8px; }
+        .mb-10 { margin-bottom: 10px; }
+
+        .error-box {
+            background: rgba(255,80,80,0.1);
+            border: 1px solid rgba(255,80,80,0.25);
+            color: #ff6b6b;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .avatar-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .avatar-thumb {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            font-size: 16px;
+            color: var(--muted);
+        }
+        .avatar-thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .btn-back {
+            flex: 1;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 12px;
+            cursor: pointer;
+            font-family: 'Syne', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .btn-back:hover {
+            border-color: rgba(124,106,255,0.4);
+            color: var(--text);
+            transform: translateX(-2px);
+        }
+    </style>
 </head>
 <body>
-<h1>tahrirlash</h1>
+
+<div class="bg-glow">
+    <span></span>
+    <span></span>
+</div>
+
+<div class="card">
+
+    <div class="avatar-ring">
+        {% if profile.image %}
+            <img src="{{ profile.image.url }}" alt="avatar">
+        {% else %}
+            <div class="avatar-letter">{{ msg.username|slice:":1"|upper }}</div>
+        {% endif %}
+    </div>
+
+    <h1 class="page-title">Profilni tahrirlash</h1>
+
+    <!-- Username -->
+    <div class="section">
+        <p class="section-label">Username</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="username">
+            <div class="input-row">
+                <input type="text" name="text" value="{{ msg.username }}" placeholder="Username" autofocus>
+                <button type="submit" class="btn">✓ Saqlash</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Email -->
+    <div class="section">
+        <p class="section-label">Email</p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="email">
+            <div class="input-row">
+                <input type="text" name="text" value="{{ msg.email }}" placeholder="Email">
+                <button type="submit" class="btn">✓ Saqlash</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Parol -->
+    <div class="section">
+        <p class="section-label">Parol</p>
+        {% if error %}
+            <div class="error-box">⚠ {{ error }}</div>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="password">
+            <input type="password" name="old_password" placeholder="Eski parol" class="mb-8">
+            <input type="password" name="new_password" placeholder="Yangi parol" class="mb-8">
+            <input type="password" name="confirm_password" placeholder="Yangi parolni tasdiqlang" class="mb-10">
+            <button type="submit" class="btn btn-full">🔒 Parolni yangilash</button>
+        </form>
+    </div>
+
+    <!-- Rasm -->
+    <div class="section">
+        <p class="section-label">Profil rasmi</p>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="avatar">
+            <div class="avatar-row">
+                <div class="avatar-thumb">
+                    {% if profile.image %}
+                        <img src="{{ profile.image.url }}" alt="avatar">
+                    {% else %}
+                        👤
+                    {% endif %}
+                </div>
+                <input type="file" name="avatar" accept="image/*">
+                <button type="submit" class="btn">↑ Yuklash</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Ortga -->
+    <div class="actions">
+        <a href="{% url 'porofil' chat_id=msg.id %}" class="btn-back">
+            ← Ortga
+        </a>
+    </div>
+
+</div>
+
 </body>
 </html>
