@@ -150,7 +150,7 @@ def porfiledit(request ,chat_id):
     if not request.user.is_authenticated:
         return redirect('login')
     instance = User.objects.get(id=chat_id)
-    profile = Profile.objects.get(user=instance)
+    profile, created = Profile.objects.get_or_create(user=instance)
     if request.method == "POST":
         form_type = request.POST.get('form_type')
         value = request.POST.get('text', '').strip()
