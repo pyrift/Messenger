@@ -153,7 +153,7 @@
             padding: 10px 14px;
         }
         .msg-sender {
-            font-size: 0.72rem;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--accent);
             margin-bottom: 4px;
@@ -276,10 +276,13 @@
     <div class="messages-area" id="msgArea">
         {% for msg in messages %}
             {% if msg.sender == request.user %}
+
                 <!-- O'z xabari — o'ng tomonda -->
                 <div class="msg-row mine">
                     <div class="msg-bubble">
+
                         <a href="{% url 'update' msg.id %}" class="edit-btn" title="Tahrirlash">✏</a>
+
                         <div class="bubble-inner">
                             <a href="{% url 'update' msg.id %}" class="msg-text">{{ msg.text }}</a>
                             <div class="msg-time">{{ msg.sent_at|date:"H:i" }}</div>
@@ -297,6 +300,7 @@
                 <!-- Boshqa user xabari — chap tomonda -->
                 <div class="msg-row other">
                     <div class="msg-avatar">
+
                         {% if msg.sender.profile.image %}
                             <img src="{{ msg.sender.profile.image.url }}" alt="avatar">
                         {% else %}
@@ -305,7 +309,8 @@
                     </div>
                     <div class="msg-bubble">
                         <div class="bubble-inner">
-                            <div class="msg-sender">{{ msg.sender.username }}</div>
+
+                            <div class="msg-sender"><a href="{%  url 'user_profile' msg.sender.id %}">{{ msg.sender.username }}</a></div>
 
 
                             <span class="msg-text, ong_tomon">{{ msg.text }}</span>

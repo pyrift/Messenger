@@ -1,5 +1,3 @@
-from pydoc import text
-
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -7,6 +5,7 @@ from .models import Chat, Message
 from user.models import User
 from user.models import Profile
 from django.contrib.auth import update_session_auth_hash
+
 # class ChatAPI(generics.ListCreateAPIView):
 #     serializer_class = ChatSerializer
 #     permission_classes = [permissions.IsAuthenticated]
@@ -42,7 +41,6 @@ from django.contrib.auth import update_session_auth_hash
 #     context_object_name = 'messages'
 #     def get_queryset(self):
 #         return Message.objects.filter(chat_id=self.kwargs['chat_id'], chat__participants=self.request.user)
-
 
 def chat_list(request):
     # Login qilmagan user chatlarni ko'rmasin.
@@ -137,14 +135,27 @@ def update(request, chat_id):
     return render(request, 'edit.html', {'message': instance})
 
 def porofil(request, chat_id):
+
     if not request.user.is_authenticated:
         return redirect('login')
+
+    if  request.user.id != chat_id:
+        return redirect('chat_list')
 
     userdatab = get_object_or_404(User, id=chat_id)
     context = {
         'userdatab': userdatab,
     }
     return render(request, 'porofil.html',context)
+
+def user_profile(request, user_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    userdatab = get_object_or_404(User, id=user_id)
+    context = {
+        'userdatab': userdatab,
+    }
+    return render(request, 'user_porofil.html', context)
 
 def porfiledit(request ,chat_id):
     if not request.user.is_authenticated:
