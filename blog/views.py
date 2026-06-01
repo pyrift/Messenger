@@ -1,3 +1,5 @@
+from email.mime import image
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -100,9 +102,21 @@ def message(request, chat_id):
             Message.objects.create(chat=chat, sender=request.user, text=text)
             return redirect('chat_messages', chat_id=chat.id)
 
+        form_type = request.POST.get('form_type')
+        if form_type == "avatar":
+            image = request.FILES.get('image')
+            if image:
+                Message.objects.create(chat=chat, sender=request.user, image=image)
+                return redirect('chat_messages', chat_id=chat.id)
+            else:
+                return redirect('chat_messages', chat_id=chat.id)
+
+
+
     # Shu chatdagi xabarlarni sender bilan birga olamiz.
+
     messages = chat.messages.all().select_related('sender')
-    context = {'chat': chat, 'messages': messages}
+    context = {'chat': chat, 'messages': messages,}
     if request.method == "POST":
         chat = get_object_or_404(Chat, id=chat_id)
         chat.delete()
