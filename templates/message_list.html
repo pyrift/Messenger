@@ -428,24 +428,35 @@
 <body>
 
 <!-- HEADER -->
-<header>
-    <div class="header-left">
-        <a href="{% url 'chat_list' %}" class="back-btn">←</a>
-        <div class="chat-icon">💬</div>
-        <div class="chat-meta">
-            <div class="name">{{ chat.chat_name }}</div>
-            <div class="members">
-                {% for p in chat.participants.all %}{{ p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
-            </div>
+<header><div class="header-left">
+    <a href="{% url 'chat_list' %}" class="back-btn">←</a>
+    <div class="avatar">
+        {% if chat.avatar %}
+            <!-- Group chat avatar -->
+            <img src="{{ chat.avatar.url }}" alt="avatar">
+        {% elif chat.participants.count == 2 %}
+            <!-- Private chat - boshqa ishtirokchi -->
+            {% for p in chat.participants.all %}
+                {% if p != request.user %}
+                    {% if p.profile.image %}
+                        <img src="{{ p.profile.image.url }}" alt="avatar">
+                    {% else %}
+                        {{ p.username|slice:":1"|upper }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <!-- Group chat without avatar -->
+            {{ chat.chat_name|slice:":1"|upper }}
+        {% endif %}
+    </div>
+    <div class="chat-meta">
+        <div class="name">{{ chat.chat_name }}</div>
+        <div class="members">
+            {% for p in chat.participants.all %}{{ p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
         </div>
     </div>
-    <div class="header-right">
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="delete_chat">
-            <button type="submit" class="btn-delete">🗑 O'chirish</button>
-        </form>
-    </div>
+</div>
 </header>
 
 <!-- XABARLAR -->

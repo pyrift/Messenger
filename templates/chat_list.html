@@ -247,7 +247,26 @@
             {% for chat in chats %}
                 <li class="chat-item">
                     <a href="{% url 'chat_messages' chat.id %}" class="chat-link">
-                        <div class="chat-icon">💬</div>
+                           <div class="avatar">
+        {% if chat.avatar %}
+            <!-- Group chat avatar -->
+            <img src="{{ chat.avatar.url }}" alt="avatar">
+        {% elif chat.participants.count == 2 %}
+            <!-- Private chat - boshqa ishtirokchi -->
+            {% for p in chat.participants.all %}
+                {% if p != request.user %}
+                    {% if p.profile.image %}
+                        <img src="{{ p.profile.image.url }}" alt="avatar">
+                    {% else %}
+                        {{ p.username|slice:":1"|upper }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <!-- Group chat without avatar -->
+            {{ chat.chat_name|slice:":1"|upper }}
+        {% endif %}
+    </div>
                         <div class="chat-info">
                             <div class="chat-name">{{ chat.name }}</div>
                             <div class="chat-meta">
