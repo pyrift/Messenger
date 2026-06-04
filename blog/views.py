@@ -1,5 +1,5 @@
 from email.mime import image
-
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -117,7 +117,8 @@ def message(request, chat_id):
 
     messages = chat.messages.all().select_related('sender')
     context = {'chat': chat, 'messages': messages,}
-    if request.method == "POST":
+    form_type = request.POST.get('form_type')
+    if form_type == "delete":
         chat = get_object_or_404(Chat, id=chat_id)
         chat.delete()
         return redirect('chat_list')
@@ -230,3 +231,21 @@ def porfiledit(request ,chat_id):
 def logout_page(request):
     logout(request)
     return redirect('login')
+
+def get_new_messages(request, chat_id, last_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'messages': []})
+
+    chat = get_object_or_404(Chat, id=chat_id, participants=request.user)
+    messages = chat.messages.filter(id__gt=last_id).select_related('sender')
+
+    data = []
+    for msg in messages:
+        data.append({
+            'id': msg.id,
+            'text': msg.text,
+            'sender': msg.sender.username,
+            'is_me': msg.sender == request.user,
+        })
+
+    return JsonResponse({'messages': data})

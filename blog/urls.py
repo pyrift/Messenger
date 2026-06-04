@@ -8,4 +8,5 @@ urlpatterns = [
     path('porofil/<int:chat_id>/', views.porofil, name='porofil'),
     path('porfiledit/<int:chat_id>/', views.porfiledit, name='porfiledit'),
     path("user_profile/<int:user_id>", views.user_profile, name="user_profile"),
+path('chat/<int:chat_id>/messages/<int:last_id>/', views.get_new_messages, name='get_new_messages'),
 ]

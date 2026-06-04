@@ -456,6 +456,10 @@
             {% for p in chat.participants.all %}{{ p.username }}{% if not forloop.last %}, {% endif %}{% endfor %}
         </div>
     </div>
+     <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger" name="form_type" value="delete">🗑 O'chirish</button>
+    </form>
 </div>
 </header>
 
@@ -612,6 +616,34 @@
         imgPreview.classList.remove('show');
         imgThumb.src = '';
     });
+      let lastId = {{ messages.last.id|default:0 }};
+  const chatId = {{ chat.id }};
+setInterval(() => {
+  fetch(`/chat/${chatId}/messages/${lastId}/`)
+    .then(r => r.json())
+    .then(data => {
+      data.messages.forEach(msg => {
+        lastId = msg.id;
+
+        const row = document.createElement('div');
+        row.className = `msg-row ${msg.is_me ? 'mine' : 'other'}`;
+
+        row.innerHTML = `
+          <div class="avatar">${msg.sender[0].toUpperCase()}</div>
+          <div class="bubble-wrap">
+            <div class="bubble">
+              ${!msg.is_me ? `<div class="bubble-sender">${msg.sender}</div>` : ''}
+              <div class="bubble-text">${msg.text}</div>
+              <div class="bubble-time">${msg.time}</div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('msgArea').appendChild(row);
+        row.scrollIntoView();
+      });
+    });
+}, 3000);
 </script>
 </body>
 </html>
