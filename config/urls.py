@@ -25,7 +25,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('blog.urls')),
-    path('', include('user.url'), name='login'),
+    path('', include('user.urls'), name='login'),
     path('logout/', logout_page, name='logout'),
 ]
 if settings.DEBUG:
