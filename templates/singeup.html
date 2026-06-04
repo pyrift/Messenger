@@ -124,7 +124,7 @@
         <div class="card">
             <h1>Ro'yxatdan o'tish</h1>
 
-            <form method="post" action="{% url 'singe_up_view' %}">
+            <form method="post" action="{% url 'signup' %}">
                 {% csrf_token %}
 
                 {% if form.errors %}
