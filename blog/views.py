@@ -216,13 +216,9 @@ def porfiledit(request ,chat_id):
             update_session_auth_hash(request, instance)  # ← Shu qator muammoni hal qiladi
             return redirect('porofil', chat_id=instance.id)
         elif form_type == "avatar":
-            print("=== AVATAR ===")
-            print("FILES:", request.FILES)
-            print("avatar bormi:", 'avatar' in request.FILES)
             if 'avatar' in request.FILES:
                 profile.image = request.FILES['avatar']
                 profile.save()
-                print("Saqlandi:", profile.image.name)
 
         return redirect('porofil', chat_id=instance.id)
 

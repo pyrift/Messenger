@@ -1,4 +1,5 @@
 from pathlib import Path
+import cloudinary
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,13 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'blog',
     'rest_framework',
     'rest_framework.authtoken',
     'user',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -67,12 +69,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'messager',
+        'USER': 'linux',
+        'PASSWORD': '!linux128',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dhrivco5m',
+    'API_KEY': '152565757871356',
+    'API_SECRET': 'TVH2tO-1JGe6RuQxnlxJIzg-big',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
+
+cloudinary.config(
+    cloud_name='dhrivco5m',
+    api_key='152565757871356',
+    api_secret='TVH2tO-1JGe6RuQxnlxJIzg-big'
+)
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
